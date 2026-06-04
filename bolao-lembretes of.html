@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lembretes — Bolão do Galo</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green: #1a7a4a;
+    --green-light: #e8f5ee;
+    --green-mid: #2ea865;
+    --yellow: #f5c518;
+    --yellow-light: #fffbe6;
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #e0ddd6;
+    --danger: #c0392b;
+    --danger-light: #fdecea;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--green);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo { font-size: 2rem; }
+  header h1 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  header p { font-size: 13px; opacity: 0.75; margin-top: 2px; }
+
+  .main { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 1.5rem;
+  }
+  .tab {
+    flex: 1;
+    padding: 9px 12px;
+    border: none;
+    background: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .tab:hover { background: var(--bg); color: var(--text); }
+  .tab.active { background: var(--green); color: white; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  .add-form { display: grid; grid-template-columns: 1fr 120px 1fr auto; gap: 10px; align-items: end; }
+  select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  select:focus { border-color: var(--green); background: white; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  input[type=text] {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input[type=text]:focus { border-color: var(--green); background: white; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--bg); }
+  .btn.primary { background: var(--green); color: white; border-color: var(--green); }
+  .btn.primary:hover { background: #155f38; }
+  .btn.whatsapp { background: #25d366; color: white; border-color: #25d366; }
+  .btn.whatsapp:hover { background: #1da851; }
+  .btn.danger { color: var(--danger); border-color: #f5c5c0; }
+  .btn.danger:hover { background: var(--danger-light); }
+  .btn.sm { padding: 7px 13px; font-size: 13px; }
+
+  .p-list { display: flex; flex-direction: column; gap: 8px; }
+  .p-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+  .avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--green-light);
+    color: var(--green);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .p-name { font-size: 14px; font-weight: 500; }
+  .p-phone { font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .p-info { flex: 1; }
+
+  .empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 8px; }
+
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    resize: vertical;
+    min-height: 110px;
+    outline: none;
+    line-height: 1.6;
+  }
+  textarea:focus { border-color: var(--green); background: white; }
+
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .tag {
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 99px;
+    cursor: pointer;
+    border: 1px solid #b6dfc9;
+  }
+  .tag:hover { background: #d0eedd; }
+
+  .preview-box {
+    background: var(--yellow-light);
+    border: 1px solid #ffe07a;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    color: #5a4a00;
+    margin-top: 1rem;
+  }
+  .preview-label { font-size: 11px; font-weight: 500; color: #9a8200; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--green); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .dispatch-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+  }
+  .dispatch-item.sent {
+    opacity: 0.55;
+    border-color: #b6dfc9;
+    background: var(--green-light);
+  }
+  .sent-badge {
+    font-size: 12px;
+    color: var(--green);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .dispatch-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .alert {
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    margin-bottom: 1rem;
+    display: none;
+    font-weight: 500;
+  }
+  .alert.success { display: block; background: var(--green-light); color: var(--green); border: 1px solid #b6dfc9; }
+  .alert.error { display: block; background: var(--danger-light); color: var(--danger); border: 1px solid #f5c5c0; }
+
+  .dispatch-actions { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+
+  @media (max-width: 600px) {
+    .add-form { grid-template-columns: 1fr 1fr; }
+    .add-form .form-group:first-child { grid-column: span 2; }
+    .add-form button { grid-column: span 2; }
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    header { padding: 1rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🐓</div>
+  <div>
+    <h1>Bolão do Galo — Lembretes</h1>
+    <p>Dispare lembretes personalizados via WhatsApp</p>
+  </div>
+</header>
+
+<div class="main">
+  <div id="alert" class="alert"></div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('participantes')">👥 Participantes</button>
+    <button class="tab" onclick="switchTab('mensagem')">💬 Mensagem</button>
+    <button class="tab" onclick="switchTab('disparar')">🚀 Disparar</button>
+  </div>
+
+  <!-- PARTICIPANTES -->
+  <div id="sec-participantes" class="section active">
+    <div class="card">
+      <h3>Adicionar participante</h3>
+      <div class="add-form">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" id="inp-nome" placeholder="Ex: João Silva" />
+        </div>
+        <div class="form-group">
+          <label>País</label>
+          <select id="inp-pais">
+            <option value="55">🇧🇷 +55 Brasil</option>
+            <option value="1">🇺🇸 +1 EUA/Canadá</option>
+            <option value="44">🇬🇧 +44 Reino Unido</option>
+            <option value="351">🇵🇹 +351 Portugal</option>
+            <option value="34">🇪🇸 +34 Espanha</option>
+            <option value="49">🇩🇪 +49 Alemanha</option>
+            <option value="33">🇫🇷 +33 França</option>
+            <option value="39">🇮🇹 +39 Itália</option>
+            <option value="31">🇳🇱 +31 Holanda</option>
+            <option value="41">🇨🇭 +41 Suíça</option>
+            <option value="43">🇦🇹 +43 Áustria</option>
+            <option value="32">🇧🇪 +32 Bélgica</option>
+            <option value="46">🇸🇪 +46 Suécia</option>
+            <option value="47">🇳🇴 +47 Noruega</option>
+            <option value="45">🇩🇰 +45 Dinamarca</option>
+            <option value="358">🇫🇮 +358 Finlândia</option>
+            <option value="48">🇵🇱 +48 Polônia</option>
+            <option value="54">🇦🇷 +54 Argentina</option>
+            <option value="56">🇨🇱 +56 Chile</option>
+            <option value="57">🇨🇴 +57 Colômbia</option>
+            <option value="52">🇲🇽 +52 México</option>
+            <option value="598">🇺🇾 +598 Uruguai</option>
+            <option value="61">🇦🇺 +61 Austrália</option>
+            <option value="81">🇯🇵 +81 Japão</option>
+            <option value="82">🇰🇷 +82 Coreia do Sul</option>
+            <option value="86">🇨🇳 +86 China</option>
+            <option value="91">🇮🇳 +91 Índia</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Número (sem código do país)</label>
+          <input type="text" id="inp-fone" placeholder="Ex: 41999998888" />
+        </div>
+        <button class="btn primary" onclick="addParticipant()">+ Adicionar</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Participantes cadastrados</h3>
+      <div id="participant-list" class="p-list"></div>
+    </div>
+  </div>
+
+  <!-- MENSAGEM -->
+  <div id="sec-mensagem" class="section">
+    <div class="card">
+      <h3>Modelo da mensagem</h3>
+      <textarea id="msg-template">Oi {nome}! 👋 Não esquece de fazer o palpite dos jogos de hoje no bolão do Galo! Acesse: https://bolao-galo.vercel.app/ 🐓⚽</textarea>
+      <div class="tags">
+        <span style="font-size:12px; color:var(--muted); align-self:center;">Variáveis:</span>
+        <span class="tag" onclick="insertVar('{nome}')">{nome}</span>
+      </div>
+      <div style="margin-top:1rem;">
+        <div class="preview-label">Pré-visualização</div>
+        <div class="preview-box" id="preview"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISPARAR -->
+  <div id="sec-disparar" class="section">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">participantes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-sent" style="color:#e67e22;">0</div>
+        <div class="stat-label">enviados hoje</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-pending">0</div>
+        <div class="stat-label">pendentes</div>
+      </div>
+    </div>
+    <div class="dispatch-actions">
+      <button class="btn whatsapp" onclick="dispatchAll()" style="flex:1;">🚀 Disparar todos os pendentes</button>
+      <button class="btn" onclick="resetSent()">↺ Resetar status</button>
+    </div>
+    <div id="dispatch-list" class="dispatch-list"></div>
+  </div>
+</div>
+
+<script>
+  let participants = JSON.parse(localStorage.getItem('bolao_participants') || '[]');
+  // Migração: garante que todos os participantes antigos tenham countryCode
+  participants = participants.map(p => ({ countryCode: '55', ...p }));
+  let sentToday = JSON.parse(localStorage.getItem('bolao_sent_' + today()) || '[]');
+
+  function today() {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  function save() {
+    localStorage.setItem('bolao_participants', JSON.stringify(participants));
+    localStorage.setItem('bolao_sent_' + today(), JSON.stringify(sentToday));
+  }
+
+  function initials(name) {
+    return name.split(' ').slice(0, 2).map(p => (p[0] || '').toUpperCase()).join('');
+  }
+
+  function showAlert(msg, type) {
+    const el = document.getElementById('alert');
+    el.textContent = msg;
+    el.className = 'alert ' + type;
+    clearTimeout(window._alertTimer);
+    window._alertTimer = setTimeout(() => { el.className = 'alert'; }, 3500);
+  }
+
+  function renderParticipants() {
+    const list = document.getElementById('participant-list');
+    if (participants.length === 0) {
+      list.innerHTML = '<div class="empty"><div class="empty-icon">👥</div>Nenhum participante ainda.<br>Adicione acima para começar!</div>';
+      return;
+    }
+    list.innerHTML = participants.map((p, i) => `
+      <div class="p-item">
+        <div class="avatar">${initials(p.name)}</div>
+        <div class="p-info">
+          <div class="p-name">${p.name}</div>
+          <div class="p-phone">📱 ${formatPhone(p.phone, p.countryCode)}</div>
+        </div>
+        <button class="btn danger sm" onclick="removeParticipant(${i})">🗑 Remover</button>
+      </div>
+    `).join('');
+  }
+
+  function formatPhone(phone, countryCode) {
+    const d = phone.replace(/\D/g, '');
+    const cc = countryCode || '55';
+    if (cc === '55') {
+      if (d.length === 11) return `🇧🇷 (${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
+      if (d.length === 10) return `🇧🇷 (${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+    }
+    return `+${cc} ${d}`;
+  }
+
+  function addParticipant() {
+    const name = document.getElementById('inp-nome').value.trim();
+    const phone = document.getElementById('inp-fone').value.trim().replace(/\D/g, '');
+    const countryCode = document.getElementById('inp-pais').value;
+    if (!name || !phone) { showAlert('Preencha nome e número.', 'error'); return; }
+    if (phone.length < 6) { showAlert('Número inválido.', 'error'); return; }
+    participants.push({ name, phone, countryCode });
+    save();
+    document.getElementById('inp-nome').value = '';
+    document.getElementById('inp-fone').value = '';
+    renderParticipants();
+    updateStats();
+    showAlert(`✅ ${name} adicionado com sucesso!`, 'success');
+  }
+
+  function removeParticipant(i) {
+    const name = participants[i].name;
+    participants.splice(i, 1);
+    sentToday = sentToday.filter(id => id !== i).map(id => id > i ? id - 1 : id);
+    save();
+    renderParticipants();
+    updateStats();
+    renderDispatchList();
+    showAlert(`${name} removido.`, 'success');
+  }
+
+  function getTemplate() {
+    return document.getElementById('msg-template')?.value || '';
+  }
+
+  function buildMessage(name) {
+    return getTemplate().replace(/\{nome\}/g, name);
+  }
+
+  function updatePreview() {
+    const first = participants[0]?.name || 'João';
+    document.getElementById('preview').textContent = buildMessage(first);
+  }
+
+  function insertVar(v) {
+    const ta = document.getElementById('msg-template');
+    const start = ta.selectionStart, end = ta.selectionEnd;
+    ta.value = ta.value.slice(0, start) + v + ta.value.slice(end);
+    ta.selectionStart = ta.selectionEnd = start + v.length;
+    ta.focus();
+    updatePreview();
+  }
+
+  function updateStats() {
+    const total = participants.length;
+    const sent = sentToday.length;
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-sent').textContent = sent;
+    document.getElementById('stat-pending').textContent = Math.max(0, total - sent);
+  }
+
+  function renderDispatchList() {
+    const list = document.getElementById('dispatch-list');
+    if (participants.length === 0) {
+      list.innerHTML = '<div class="empty"><div class="empty-icon">🚀</div>Cadastre participantes na aba Participantes.</div>';
+      return;
+    }
+    list.innerHTML = participants.map((p, i) => {
+      const sent = sentToday.includes(i);
+      return `
+        <div class="dispatch-item ${sent ? 'sent' : ''}">
+          <div class="avatar">${initials(p.name)}</div>
+          <div class="p-info">
+            <div class="p-name">${p.name}</div>
+          <div class="p-phone">+${p.countryCode || '55'} ${p.phone} → wa.me/${(p.countryCode||'55')+p.phone.replace(/\D/g,'')}</div>
+          </div>
+          ${sent
+            ? `<span class="sent-badge">✅ Enviado</span>`
+            : `<button class="btn whatsapp sm" onclick="sendOne(${i})">📲 Enviar</button>`
+          }
+        </div>
+      `;
+    }).join('');
+  }
+
+  function sendOne(i) {
+    const p = participants[i];
+    const msg = encodeURIComponent(buildMessage(p.name));
+    const cc = p.countryCode || '55';
+    const phone = cc + p.phone.replace(/\D/g, '');
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    if (!sentToday.includes(i)) sentToday.push(i);
+    save();
+    updateStats();
+    renderDispatchList();
+  }
+
+  let _dispatchQueue = [];
+  let _dispatchIdx = 0;
+
+  function dispatchAll() {
+    _dispatchQueue = participants.map((_, i) => i).filter(i => !sentToday.includes(i));
+    if (_dispatchQueue.length === 0) {
+      showAlert('✅ Todos já foram enviados hoje! Use "Resetar status" para enviar novamente.', 'success');
+      return;
+    }
+    _dispatchIdx = 0;
+    sendNext();
+  }
+
+  function sendNext() {
+    if (_dispatchIdx >= _dispatchQueue.length) {
+      showAlert(`🎉 ${_dispatchQueue.length} lembrete(s) disparado(s)!`, 'success');
+      return;
+    }
+    const i = _dispatchQueue[_dispatchIdx];
+    const p = participants[i];
+    const msg = encodeURIComponent(buildMessage(p.name));
+    const phone = '55' + p.phone.replace(/\D/g, '');
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    if (!sentToday.includes(i)) sentToday.push(i);
+    save();
+    updateStats();
+    renderDispatchList();
+    _dispatchIdx++;
+    if (_dispatchIdx < _dispatchQueue.length) {
+      setTimeout(sendNext, 1500);
+    } else {
+      showAlert(`🎉 ${_dispatchQueue.length} lembrete(s) disparado(s)!`, 'success');
+    }
+  }
+
+  function resetSent() {
+    sentToday = [];
+    save();
+    updateStats();
+    renderDispatchList();
+    showAlert('Status resetado. Pode disparar novamente.', 'success');
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const tabs = ['participantes', 'mensagem', 'disparar'];
+    const idx = tabs.indexOf(tab);
+    document.querySelectorAll('.tab')[idx].classList.add('active');
+    document.getElementById('sec-' + tab).classList.add('active');
+    if (tab === 'disparar') { updateStats(); renderDispatchList(); }
+    if (tab === 'mensagem') { updatePreview(); }
+  }
+
+  document.getElementById('msg-template').addEventListener('input', updatePreview);
+  document.getElementById('inp-fone').addEventListener('keydown', e => { if (e.key === 'Enter') addParticipant(); });
+  document.getElementById('inp-nome').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('inp-fone').focus(); });
+
+  renderParticipants();
+  updateStats();
+  updatePreview();
+</script>
+</body>
+</html>
